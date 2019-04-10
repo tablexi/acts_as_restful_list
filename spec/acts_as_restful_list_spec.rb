@@ -68,27 +68,27 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should automatically reorder the list if a record is updated with a lower position' do
-        fourth_mixin = Mixin.first( :conditions => { :position => 4 } )
+        fourth_mixin = Mixin.find_by(:position => 4)
         fourth_mixin.position = 2
         fourth_mixin.save!
         fourth_mixin.reload.position.should == 2
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3,4]
       end
 
       it 'should reorder the list correctly if a record in the middle is updated with a lower position' do
-        third_mixin = Mixin.first( :conditions => { :position => 3 } )
+        third_mixin = Mixin.find_by(:position => 3)
         third_mixin.position = 2
         third_mixin.save!
         third_mixin.reload.position.should == 2
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3,4]
       end
 
       it 'should automatically reorder the list if a record is updated with a higher position' do
-        second_mixin = Mixin.first( :conditions => { :position => 2 } )
+        second_mixin = Mixin.find_by(:position => 2)
         second_mixin.position = 4
         second_mixin.save!
         second_mixin.reload.position.should == 4
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3,4]
       end
 
       it "should create an order if there is none" do
@@ -96,7 +96,7 @@ describe "ActsAsRestfulList" do
         mixin = Mixin.first
         mixin.position = 3
         mixin.save!
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3,4]
       end
     end
 
@@ -109,9 +109,9 @@ describe "ActsAsRestfulList" do
 
       it 'should automatically reorder the list if the record is deleted' do
         (1..4).each{ Mixin.create! }
-        second_mixin = Mixin.first( :conditions => { :position => 2 } )
+        second_mixin = Mixin.find_by(:position => 2)
         second_mixin.destroy
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3]
       end
     end
 
@@ -151,8 +151,8 @@ describe "ActsAsRestfulList" do
 
     describe 'reordering on destroy' do
       it 'should raise an error for stale objects' do
-        second_mixin = Mixin.first( :conditions => { :position => 2 } )
-        third_mixin  = Mixin.first( :conditions => { :position => 3 } )
+        second_mixin = Mixin.find_by(:position => 2)
+        third_mixin  = Mixin.find_by(:position => 3)
         second_mixin.destroy
         lambda {
           third_mixin.destroy
@@ -160,20 +160,20 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should NOT raise an error if update did not affect existing position' do
-        second_mixin = Mixin.first( :conditions => { :position => 2 } )
-        third_mixin  = Mixin.first( :conditions => { :position => 3 } )
+        second_mixin = Mixin.find_by(:position => 2)
+        third_mixin  = Mixin.find_by(:position => 3)
         third_mixin.destroy
         lambda {
           second_mixin.destroy
         }.should_not raise_error
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2]
+        Mixin.order('position ASC').collect(&:position).should == [1,2]
       end
     end
 
     describe 'reordering on update' do
       it 'should raise an error for stale objects' do
-        first_mixin  = Mixin.first( :conditions => { :position => 1 } )
-        fourth_mixin = Mixin.first( :conditions => { :position => 4 } )
+        first_mixin  = Mixin.find_by(:position => 1)
+        fourth_mixin = Mixin.find_by(:position => 4)
         fourth_mixin.update_attributes(:position => 1)
         lambda {
           first_mixin.update_attributes(:position => 2)
@@ -181,13 +181,13 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should NOT raise an error if update did not affect existing position' do
-        first_mixin  = Mixin.first( :conditions => { :position => 1 } )
-        fourth_mixin = Mixin.first( :conditions => { :position => 4 } )
+        first_mixin  = Mixin.find_by(:position => 1)
+        fourth_mixin = Mixin.find_by(:position => 4)
         fourth_mixin.update_attributes(:position => 2)
         lambda {
           first_mixin.update_attributes(:position => 3)
         }.should_not raise_error
-        Mixin.all(:order => 'position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.order('position ASC').collect(&:position).should == [1,2,3,4]
       end
     end
 
@@ -249,19 +249,19 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should automatically reorder the list if a record is updated with a lower position' do
-        fourth_mixin = Mixin.first( :conditions => { :pos => 4 } )
+        fourth_mixin = Mixin.find_by(:pos => 4)
         fourth_mixin.pos = 2
         fourth_mixin.save!
         fourth_mixin.reload.pos.should == 2
-        Mixin.all(:order => 'pos ASC').collect(&:pos).should == [1,2,3,4]
+        Mixin.order('pos ASC').collect(&:pos).should == [1,2,3,4]
       end
 
       it 'should automatically reorder the list if a record is updated with a higher position' do
-        second_mixin = Mixin.first( :conditions => { :pos => 2 } )
+        second_mixin = Mixin.find_by(:pos => 2)
         second_mixin.pos = 4
         second_mixin.save!
         second_mixin.reload.pos.should == 4
-        Mixin.all(:order => 'pos ASC').collect(&:pos).should == [1,2,3,4]
+        Mixin.order('pos ASC').collect(&:pos).should == [1,2,3,4]
       end
     end
 
@@ -274,9 +274,9 @@ describe "ActsAsRestfulList" do
 
       it 'should automatically reorder the list if the record is deleted' do
         (1..4).each{ Mixin.create! }
-        second_mixin = Mixin.first( :conditions => { :pos => 2 } )
+        second_mixin = Mixin.find_by(:pos => 2)
         second_mixin.destroy
-        Mixin.all(:order => 'pos ASC').collect(&:pos).should == [1,2,3]
+        Mixin.order('pos ASC').collect(&:pos).should == [1,2,3]
       end
     end
   end
@@ -331,50 +331,51 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should automatically reorder the list if a record is updated with a lower position' do
-        fourth_mixin = Mixin.first( :conditions => { :position => 4, :parent_id => 1 } )
+        fourth_mixin = Mixin.find_by(:position => 4, :parent_id => 1)
         fourth_mixin.position = 2
         fourth_mixin.save!
         fourth_mixin.reload.position.should == 2
-        Mixin.all(:conditions => { :parent_id => 1 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4,5,6]
+        Mixin.where(:parent_id => 1).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2).order('position ASC').collect(&:position).should == [1,2,3,4,5,6]
       end
 
       it 'should automatically reorder the list if a record is updated with a higher position' do
-        second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1  } )
+        second_mixin = Mixin.find_by(:position => 2, :parent_id => 1)
         second_mixin.position = 4
         second_mixin.save!
         second_mixin.reload.position.should == 4
-        Mixin.all(:conditions => { :parent_id => 1 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4,5,6]
+        Mixin.where(:parent_id => 1).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2).order('position ASC').collect(&:position).should == [1,2,3,4,5,6]
       end
 
       it 'should report the old and new scope correctly' do
-        second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1  } )
+        second_mixin = Mixin.find_by(:position => 2, :parent_id => 1)
         second_mixin.parent_id = 2
         second_mixin.position = 4
+        second_mixin.save!
         second_mixin.scope_condition_was.should == 'parent_id = 1'
         second_mixin.scope_condition.should == 'parent_id = 2'
       end
 
       it 'should automatically reorder both lists if a record is moved between them' do
-        second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1  } )
+        second_mixin = Mixin.find_by(:position => 2, :parent_id => 1)
         second_mixin.parent_id = 2
         second_mixin.position = 4
         second_mixin.save!
         second_mixin.reload.parent_id.should == 2
         second_mixin.reload.position.should == 4
-        Mixin.all(:conditions => { :parent_id => 1 }, :order => 'position ASC').collect(&:position).should == [1,2,3]
-        Mixin.all(:conditions => { :parent_id => 2 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4,5,6,7]
+        Mixin.where(:parent_id => 1).order('position ASC').collect(&:position).should == [1,2,3]
+        Mixin.where(:parent_id => 2).order('position ASC').collect(&:position).should == [1,2,3,4,5,6,7]
       end
     end
 
     it 'should automatically reorder the list scoped by parent if the record is deleted' do
       (1..4).each{ Mixin.create!(:parent_id => 1) }
       (1..6).each{ Mixin.create!(:parent_id => 2) }
-      second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1 } )
+      second_mixin = Mixin.find_by(:position => 2, :parent_id => 1)
       second_mixin.destroy
-      Mixin.all(:conditions => { :parent_id => 1 }, :order => 'position ASC').collect(&:position).should == [1,2,3]
-      Mixin.all(:conditions => { :parent_id => 2 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4,5,6]
+      Mixin.where(:parent_id => 1).order('position ASC').collect(&:position).should == [1,2,3]
+      Mixin.where(:parent_id => 2).order('position ASC').collect(&:position).should == [1,2,3,4,5,6]
     end
   end
 
@@ -488,33 +489,33 @@ describe "ActsAsRestfulList" do
       end
 
       it 'should automatically reorder the list if a record is updated with a lower position' do
-        user5_parent1_fourth_mixin = Mixin.first( :conditions => { :position => 4, :parent_id => 1, :user_id => 5 } )
+        user5_parent1_fourth_mixin = Mixin.find_by(:position => 4, :parent_id => 1, :user_id => 5)
         user5_parent1_fourth_mixin.position = 2
         user5_parent1_fourth_mixin.save!
         user5_parent1_fourth_mixin.reload.position.should == 2
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [1,4,2,3]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [5,6,7,8]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [9,10,11,12]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [13,14,15,16]
+        Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:id).should == [1,4,2,3]
+        Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:id).should == [5,6,7,8]
+        Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:id).should == [9,10,11,12]
+        Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:id).should == [13,14,15,16]
       end
 
       it 'should automatically reorder the list if a record is updated with a higher position' do
-        second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1, :user_id => 5  } )
+        second_mixin = Mixin.find_by(:position => 2, :parent_id => 1, :user_id => 5)
         second_mixin.position = 4
         second_mixin.save!
         second_mixin.reload.position.should == 4
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [1,3,4,2]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [5,6,7,8]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [9,10,11,12]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-        Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [13,14,15,16]
+        Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:id).should == [1,3,4,2]
+        Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:id).should == [5,6,7,8]
+        Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:id).should == [9,10,11,12]
+        Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+        Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:id).should == [13,14,15,16]
       end
     end
 
@@ -523,16 +524,16 @@ describe "ActsAsRestfulList" do
       (1..4).each{ Mixin.create!(:parent_id => 2, :user_id => 5) }
       (1..4).each{ Mixin.create!(:parent_id => 1, :user_id => 7) }
       (1..4).each{ Mixin.create!(:parent_id => 2, :user_id => 7) }
-      second_mixin = Mixin.first( :conditions => { :position => 2, :parent_id => 1, :user_id => 5 } )
+      second_mixin = Mixin.find_by(:position => 2, :parent_id => 1, :user_id => 5)
       second_mixin.destroy
-      Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3]
-      Mixin.all(:conditions => { :parent_id => 1, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [1,3,4]
-      Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-      Mixin.all(:conditions => { :parent_id => 2, :user_id => 5 }, :order => 'position ASC').collect(&:id).should == [5,6,7,8]
-      Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-      Mixin.all(:conditions => { :parent_id => 1, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [9,10,11,12]
-      Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:position).should == [1,2,3,4]
-      Mixin.all(:conditions => { :parent_id => 2, :user_id => 7 }, :order => 'position ASC').collect(&:id).should == [13,14,15,16]
+      Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3]
+      Mixin.where(:parent_id => 1, :user_id => 5).order('position ASC').collect(&:id).should == [1,3,4]
+      Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:position).should == [1,2,3,4]
+      Mixin.where(:parent_id => 2, :user_id => 5).order('position ASC').collect(&:id).should == [5,6,7,8]
+      Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+      Mixin.where(:parent_id => 1, :user_id => 7).order('position ASC').collect(&:id).should == [9,10,11,12]
+      Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:position).should == [1,2,3,4]
+      Mixin.where(:parent_id => 2, :user_id => 7).order('position ASC').collect(&:id).should == [13,14,15,16]
     end
   end
 end
