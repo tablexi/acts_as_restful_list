@@ -11,25 +11,20 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/12spokes/acts_as_restful_list"
   s.summary     = "Restful acts_as_list"
   s.description = "Just like acts_as_list, but allows updating through standard restful methods."
-  
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  
   s.date = %q{2011-07-18}
-  
-  
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
   ]
-  s.files =  Dir.glob("lib/**/*") + %w(.gitignore History.rdoc LICENSE README.rdoc Todo.rdoc VERSION ) 
- 
-  
+  s.files =  Dir.glob("lib/**/*") + %w(.gitignore History.rdoc LICENSE README.rdoc Todo.rdoc VERSION )
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_path = "lib"
   s.test_files = Dir.glob('test/**/*.rb')
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
+  s.add_development_dependency "pry"
   s.add_development_dependency "sqlite3"
 end
 
