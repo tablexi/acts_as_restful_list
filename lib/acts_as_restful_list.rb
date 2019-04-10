@@ -42,7 +42,7 @@ module ActsAsRestfulList
         else
           scopes = Array(configuration[:scope]).collect do |scope|
             column = self.class.column_names.include?(scope.to_s) ? scope.to_s : "#{scope}_id"
-            value = self.send("#{column}_was")
+            value = self.send("#{column}_before_last_save")
             value.nil? ? "#{column} IS NULL" : "#{column} = #{value.is_a?(String) ? "'#{value}'" : value}"
           end
           scopes.join(' AND ')
@@ -72,7 +72,7 @@ module ActsAsRestfulList
 
           conditions = [scope_condition, "#{position_column} >= #{current_position}", "id != #{id}"].compact.join(' AND ')
           self.class.where(conditions).update_all(increment_position_sql)
-        elsif self.send( "#{position_column}_changed?" )
+        elsif self.send( "saved_change_to_#{position_column}?" )
           if previous_position > current_position
             conditions = [scope_condition, "#{position_column} >= #{current_position}", "id != #{id}", "#{position_column} < #{previous_position}"].compact.join(' AND ')
             self.class.where(conditions).update_all(increment_position_sql)
@@ -114,7 +114,7 @@ module ActsAsRestfulList
     end
 
     def previous_position
-      self.send( "#{position_column}_was" )
+      self.send( "#{position_column}_before_last_save" )
     end
 
     def increment_position_sql
